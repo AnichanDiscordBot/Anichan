@@ -11,7 +11,7 @@ assignees: ''
 *Describe the things need to be fixed/updated*
 
 > [!NOTE]
-> Be sure to add extra labels accordingly. Like if this issue a bug report then add `bug` label, or if it is update request then add `enhancement` label and if this issue a major issue then add `help wanted` label.
+> Be sure to add extra labels accordingly. Like if this issue a bug report then add `bug` label, or if it is update request then add `enhancement` label and if this issue a major issue then add `help wanted` label. **BE SURE TO REMOVE THIS TEXT WHILE CREATING AN ISSUE WITH THIS TEMPLATE**
 
 - [ ] I have checked that there is no duplicate of this issue
 - [ ] Major Issue (This is a major bug or need to updated as soon as possible)
