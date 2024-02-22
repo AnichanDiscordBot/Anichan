@@ -1,6 +1,6 @@
 ---
-name: Bug Fix
-about: This issue template is for any bug fixing.
+name: Bug Report
+about: Report any bug to be fixed
 title: "[\U0001FAB2BUG ] "
 labels: bug
 assignees: ''
@@ -9,5 +9,5 @@ assignees: ''
 
 *Describe the issue*
 
-- [ ] I have checked that there is no duplicate issues related to this
+- [ ] I have checked that there is no duplicate of this issue
 - [ ] This is a hybrid issue (enhancement + bug fix)
