@@ -11,3 +11,4 @@ assignees: ''
 
 - [ ] I have checked that there is no duplicate of this issue
 - [ ] This is a hybrid issue (enhancement + bug fix)
+- [ ] I can take this issue by myself
