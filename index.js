@@ -1,70 +1,76 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import './deploy-cmd.js';
-import config from './config.json' assert { type: 'json' };
-const token  = config.token;
+import fs from "node:fs";
+import path from "node:path";
+import "./deploy-cmd.js";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const token = process.env.TOKEN;
 
 // Discord.js setup and commands loading...
 
-import { Client, Collection, GatewayIntentBits } from 'discord.js';
+import { Client, Collection, GatewayIntentBits } from "discord.js";
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds,
-                                      GatewayIntentBits.GuildMessages,
- GatewayIntentBits.MessageContent] });
+const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+  ],
+});
 
 client.commands = new Collection();
-( async () => {
-const foldersPath = path.join(process.cwd(), 'commands/slash-cmds');
-const commandFolders = fs.readdirSync(foldersPath);
+(async () => {
+  const foldersPath = path.join(process.cwd(), "commands/slash-cmds");
+  const commandFolders = fs.readdirSync(foldersPath);
 
-for (const folder of commandFolders) {
+  for (const folder of commandFolders) {
+    const commandsPath = path.join(foldersPath, folder);
+    const commandFiles = fs
+      .readdirSync(commandsPath)
+      .filter((file) => file.endsWith(".js"));
 
-        const commandsPath = path.join(foldersPath, folder);
-        const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+    for (const file of commandFiles) {
+      const filePath = path.join(commandsPath, file);
+      const command = await import(filePath);
 
-        for (const file of commandFiles) {
+      if ("data" in command && "execute" in command) {
+        client.commands.set(command.data.name, command);
+      } else {
+        console.log(
+          `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
+        );
+      }
+    }
+  }
 
-                const filePath = path.join(commandsPath, file);
-                const command = await import(filePath);
+  const eventsPath = path.join(process.cwd(), "events");
+  const eventFiles = fs
+    .readdirSync(eventsPath)
+    .filter((file) => file.endsWith(".js"));
 
-                if ('data' in command && 'execute' in command) {
-                        client.commands.set(command.data.name, command);
+  for (const file of eventFiles) {
+    const filePath = path.join(eventsPath, file);
+    const event = await import(filePath);
 
-                } else {
-                        console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+    if (event.once) {
+      client.once(event.name, (...args) => event.execute(...args));
+    } else {
+      client.on(event.name, (...args) => event.execute(...args));
+    }
+  }
 
-                }
-        }
-};
+  const prefixCommandFolders = fs.readdirSync("./commands/prefix-cmds");
 
-const eventsPath = path.join(process.cwd(), 'events');
-const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
-
-for (const file of eventFiles) {
-
-        const filePath = path.join(eventsPath, file);
-        const event = await import(filePath);
-
-        if (event.once) {
-                client.once(event.name, (...args) => event.execute(...args));
-
-        } else {
-                client.on(event.name, (...args) => event.execute(...args));
-        }
-
-};
-
-
-const prefixCommandFolders = fs.readdirSync('./commands/prefix-cmds');
-
-for (const folder of prefixCommandFolders) {
-    const commandFiles = fs.readdirSync(`./commands/prefix-cmds/${folder}`).filter(file => file.endsWith('.js'));
+  for (const folder of prefixCommandFolders) {
+    const commandFiles = fs
+      .readdirSync(`./commands/prefix-cmds/${folder}`)
+      .filter((file) => file.endsWith(".js"));
     for (const file of commandFiles) {
       const command = await import(`./commands/prefix-cmds/${folder}/${file}`);
       client.commands.set(command.name, command);
     }
-};
-
+  }
 })();
 
 client.login(token);
