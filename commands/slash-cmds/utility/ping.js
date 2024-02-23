@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js";
+const { SlashCommandBuilder } = require("discord.js");
 
 const data = new SlashCommandBuilder()
   .setName("ping")
@@ -8,4 +8,7 @@ async function execute(interaction) {
   await interaction.reply("Pong!");
 }
 
-export { data, execute };
+module.exports = {
+  data,
+  execute,
+};
