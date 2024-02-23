@@ -11,7 +11,7 @@ const token = process.env.TOKEN;
 const commands = [];
 
 (async () => {
-  const foldersPath = path.join(process.cwd(), "commands/slash-cmds");
+  const foldersPath = path.join(process.cwd(), "commands", "slash-cmds");
 
   const commandFolders = fs.readdirSync(foldersPath);
 
